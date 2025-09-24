@@ -1,4 +1,10 @@
 def safe_reports(report: str) -> int:
+    '''
+    Analyzes a series of radiation level reports to determine how many reports are considered "safe".
+    A report is deemed safe if the radiation levels consistently increase or decrease by no more than 3 units between consecutive readings.
+    :param report: A string containing multiple lines, each line representing a series of space-separated integers indicating radiation levels.
+    :return: The count of safe reports.
+    '''
 
     reports = report.strip().split('\n')    # Split the input into lines
     levels = list(map(lambda line: list(map(int, line.strip().split())), reports))  # Convert each line into a list of integers
@@ -19,6 +25,60 @@ def safe_reports(report: str) -> int:
         if safe:
             safe_counter+=1
     return safe_counter
+
+def level_safe(nums: list[int]) -> bool:
+    diff=[abs(x_0 - x_1) for x_0, x_1 in zip(nums, nums[1:])]
+    if not all(1<=delta<=3 for delta in diff):
+        return False
+    if all(x_0 < x_1 for x_0, x_1 in zip(nums,nums[1:])):
+        return True
+    if all(x_0 > x_1 for x_0, x_1 in zip(nums,nums[1:])):
+        return True
+    return False
+
+def safe_reports_v2(report: str) -> int:
+    '''
+    Analyzes a series of radiation level reports to determine how many reports are considered "safe".
+    A report is deemed safe if the radiation levels consistently increase or decrease by no more than 3 units between consecutive readings.
+    :param report: A string containing multiple lines, each line representing a series of space-separated integers indicating radiation levels.
+    :return: The count of safe reports.
+    '''
+
+    reports = report.strip().split('\n')    # Split the input into lines
+    levels = list(map(lambda line: list(map(int, line.strip().split())), reports))  # Convert each line into a list of integers
+    safe_counter=0
+    for level in levels:
+        if level_safe(level):
+            safe_counter+=1
+    return safe_counter
+
+def safe_reports_exception(report: str) -> int:
+    '''
+    Analyzes a series of radiation level reports to determine how many reports are considered "safe".
+    A report is deemed safe if the radiation levels consistently increase or decrease by no more than 3 units between consecutive readings.
+    If a report is not safe, it checks if removing one reading can make it safe.
+    :param report: A string containing multiple lines, each line representing a series of space-separated integers indicating radiation levels.
+    :return: The count of safe reports.
+    '''
+
+    # Must confess that I was not able to solve this one without help. :-(
+    # Reference: https://www.youtube.com/watch?v=_2SqfIhfCMs
+    # Like and subscribe. :-)
+
+    reports = report.strip().split('\n')    # Split the input into lines
+    levels = list(map(lambda line: list(map(int, line.strip().split())), reports))  # Convert each line into a list of integers
+    safe_counter=0
+    for level in levels:
+        if level_safe(level):
+            safe_counter+=1
+        else:
+            for i in range(len(level)):
+                if level_safe(level[:i]+level[i+1:]):
+                    safe_counter+=1
+                    break
+    return safe_counter
+
+
 
 test='''
 7 6 4 2 1
@@ -1030,4 +1090,3 @@ report='''
 64 66 69 71 72 73 75
 39 37 35 32 29 27 24
 '''
-print(safe_reports(report))
